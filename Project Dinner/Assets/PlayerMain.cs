@@ -15,12 +15,12 @@ public class PlayerMain : MonoBehaviour
     public float speed = 12f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
-    public float grounDistance = 0.4f;
 
     private Vector2 _moveAxis;
     private Vector3 _movement;
     private Vector3 _velocity;
     private bool _isGrounded;
+    private const float groundCheckMod = -2f;
 
     private void OnEnable()
     {
@@ -40,8 +40,9 @@ public class PlayerMain : MonoBehaviour
 
     void Update()
     {
+        float groundDistance = 0.4f;
         /*Creates sphere that checks if the player is touching the ground.*/
-        _isGrounded = Physics.CheckSphere(groundCheck.position, grounDistance, goundMask);
+        _isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, goundMask);
 
         /* Condition to reset the Y velocity once the player is grounded.
         When the player is grounded the velocity becomes negative if not reseted.*/
@@ -49,7 +50,7 @@ public class PlayerMain : MonoBehaviour
         {   
            /* -2f is used since it works a bit better than 0 to make sure the 
             player is touching the ground */
-            _velocity.y = -2f;
+            _velocity.y = groundCheckMod;
         }
 
         /*Will merge these into 1 vector3 in future pr.*/
@@ -61,7 +62,7 @@ public class PlayerMain : MonoBehaviour
     }
 
     /*Movement is partitioned into two methods for better input feedback.
-     Although in theory, the newq input master has the ability to handle 2D 
+     Although in theory, the new input master has the ability to handle 2D 
     Vector inputs, This worked better.
      */
     private void MoveUpDown(InputAction.CallbackContext ctx)
@@ -79,7 +80,7 @@ public class PlayerMain : MonoBehaviour
     {
         if (_isGrounded)
         {
-            _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            _velocity.y = Mathf.Sqrt(jumpHeight * groundCheckMod * gravity);
         }
     }
     private void OnDisable()

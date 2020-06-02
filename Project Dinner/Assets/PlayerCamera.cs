@@ -11,7 +11,7 @@ public class PlayerCamera : MonoBehaviour
 
     private InputMaster _controls;
     private UnityEngine.Vector2 _direction;
-    private float xRotation = 0f;
+    static private float xRotation = 0f;
 
     private void OnEnable()
     {
