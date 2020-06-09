@@ -49,6 +49,14 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=2)""
+                },
+                {
+                    ""name"": ""MouseDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""b2c126db-83e4-4cf9-9e2b-55a12daf755b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press""
                 }
             ],
             ""bindings"": [
@@ -139,6 +147,17 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""action"": ""MoveLeftRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""47550545-fce5-4892-9898-9805595b880e"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -168,6 +187,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
         m_PlayerActions_CameraMovement = m_PlayerActions.FindAction("CameraMovement", throwIfNotFound: true);
         m_PlayerActions_MoveUpDown = m_PlayerActions.FindAction("MoveUpDown", throwIfNotFound: true);
         m_PlayerActions_MoveLeftRight = m_PlayerActions.FindAction("MoveLeftRight", throwIfNotFound: true);
+        m_PlayerActions_MouseDown = m_PlayerActions.FindAction("MouseDown", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -221,6 +241,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerActions_CameraMovement;
     private readonly InputAction m_PlayerActions_MoveUpDown;
     private readonly InputAction m_PlayerActions_MoveLeftRight;
+    private readonly InputAction m_PlayerActions_MouseDown;
     public struct PlayerActionsActions
     {
         private @InputMaster m_Wrapper;
@@ -229,6 +250,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
         public InputAction @CameraMovement => m_Wrapper.m_PlayerActions_CameraMovement;
         public InputAction @MoveUpDown => m_Wrapper.m_PlayerActions_MoveUpDown;
         public InputAction @MoveLeftRight => m_Wrapper.m_PlayerActions_MoveLeftRight;
+        public InputAction @MouseDown => m_Wrapper.m_PlayerActions_MouseDown;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -250,6 +272,9 @@ public class @InputMaster : IInputActionCollection, IDisposable
                 @MoveLeftRight.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMoveLeftRight;
                 @MoveLeftRight.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMoveLeftRight;
                 @MoveLeftRight.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMoveLeftRight;
+                @MouseDown.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMouseDown;
+                @MouseDown.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMouseDown;
+                @MouseDown.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnMouseDown;
             }
             m_Wrapper.m_PlayerActionsActionsCallbackInterface = instance;
             if (instance != null)
@@ -266,6 +291,9 @@ public class @InputMaster : IInputActionCollection, IDisposable
                 @MoveLeftRight.started += instance.OnMoveLeftRight;
                 @MoveLeftRight.performed += instance.OnMoveLeftRight;
                 @MoveLeftRight.canceled += instance.OnMoveLeftRight;
+                @MouseDown.started += instance.OnMouseDown;
+                @MouseDown.performed += instance.OnMouseDown;
+                @MouseDown.canceled += instance.OnMouseDown;
             }
         }
     }
@@ -285,5 +313,6 @@ public class @InputMaster : IInputActionCollection, IDisposable
         void OnCameraMovement(InputAction.CallbackContext context);
         void OnMoveUpDown(InputAction.CallbackContext context);
         void OnMoveLeftRight(InputAction.CallbackContext context);
+        void OnMouseDown(InputAction.CallbackContext context);
     }
 }
