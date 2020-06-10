@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMain : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public CharacterController controller;
-    private InputMaster _controls;
+    public Transform cam;
     public Transform groundCheck;
     public LayerMask goundMask;
-    
+
 
     public float speed = 12f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
+    public float turnSmoothTime = 0.1f;
+    float turnSmoothVelocity;
 
+    private InputMaster _controls;
     private Vector2 _moveAxis;
+    private Vector3 _direction;
     private Vector3 _movement;
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -33,9 +34,10 @@ public class PlayerMain : MonoBehaviour
         _controls.Enable();
     }
 
-    void Start()
+    void Awake()
     {
-        
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
@@ -47,18 +49,26 @@ public class PlayerMain : MonoBehaviour
         /* Condition to reset the Y velocity once the player is grounded.
         When the player is grounded the velocity becomes negative if not reseted.*/
         if (_isGrounded && _velocity.y < 0)
-        {   
-           /* -2f is used since it works a bit better than 0 to make sure the 
-            player is touching the ground */
+        {
+            /* -2f is used since it works a bit better than 0 to make sure the 
+             player is touching the ground */
             _velocity.y = groundCheckMod;
         }
 
         /*Will merge these into 1 vector3 in future pr.*/
-        _movement = transform.right * _moveAxis.x + transform.forward * _moveAxis.y;
+        _direction = new Vector3(_moveAxis.x, 0f, _moveAxis.y);
         _velocity.y += gravity * Time.deltaTime;
-        controller.Move(_movement * speed * Time.deltaTime);
-        controller.Move(_velocity * Time.deltaTime);
 
+        /*Rotate the player in the direction it is moving in*/
+        if (_direction.magnitude >= 0.1f)
+        {
+            float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            _movement = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            controller.Move(_movement.normalized * speed * Time.deltaTime);
+        }
+        controller.Move(_velocity * Time.deltaTime);
     }
 
     /*Movement is partitioned into two methods for better input feedback.
@@ -68,12 +78,12 @@ public class PlayerMain : MonoBehaviour
     private void MoveUpDown(InputAction.CallbackContext ctx)
     {
         _moveAxis.y = ctx.ReadValue<float>();
-        //Debug.Log($"Y axis {_moveAxis}");
-    }    
+        /*Debug.Log($"Y axis {_moveAxis}");*/
+    }
     private void MoveLeftRight(InputAction.CallbackContext ctx)
     {
         _moveAxis.x = ctx.ReadValue<float>();
-        //Debug.Log($"X axis {_moveAxis}");
+        /*Debug.Log($"X axis {_moveAxis}");*/
     }
 
     void Jump(InputAction.CallbackContext ctx)

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Numerics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerCamera : MonoBehaviour
@@ -33,7 +30,7 @@ public class PlayerCamera : MonoBehaviour
 
     void Look(InputAction.CallbackContext ctx)
     {
-        _direction = ctx.ReadValue<UnityEngine.Vector2>() * mouseSensitivity * Time.deltaTime;
+        _direction = ctx.ReadValue<Vector2>() * mouseSensitivity * Time.deltaTime;
 
         /*We split up the axis to be able to handle the events seperately.
          in X axis the playerbody rotates and in Y axis the Camera rotates
@@ -45,8 +42,8 @@ public class PlayerCamera : MonoBehaviour
         /*Clamping makes sure the player can't make a 360 turn upwards or downwards*/
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.localRotation = UnityEngine.Quaternion.Euler(xRotation, 0f, 0f);
-        playerBody.Rotate(UnityEngine.Vector3.up * mouseX);
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        playerBody.Rotate(Vector3.up * mouseX);
     }
     private void OnDisable()
     {
